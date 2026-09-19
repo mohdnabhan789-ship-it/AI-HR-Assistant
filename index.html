@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI HR Assistant</title>
+
+
+    <style>
+
+        /* =========================================
+           RESET
+        ========================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================
+           BODY
+        ========================================= */
+
+        body {
+
+            font-family:
+                Inter,
+                Arial,
+                sans-serif;
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(59, 130, 246, 0.18),
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(139, 92, 246, 0.18),
+                    transparent 30%
+                ),
+
+                #f5f7fb;
+
+            overflow-x: hidden;
+
+            overflow-y: auto;
+        }
+
+
+        /* =========================================
+           ANIMATED BACKGROUND
+        ========================================= */
+
+        .background-animation {
+
+            position: fixed;
+
+            width: 100%;
+            height: 100%;
+
+            top: 0;
+            left: 0;
+
+            pointer-events: none;
+
+            overflow: hidden;
+
+            z-index: -1;
+        }
+
+
+        .blob {
+
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(70px);
+
+            opacity: 0.25;
+
+            animation:
+                floatBlob 12s ease-in-out infinite;
+        }
+
+
+        .blob.one {
+
+            width: 300px;
+            height: 300px;
+
+            background: #3b82f6;
+
+            top: -100px;
+            left: -100px;
+        }
+
+
+        .blob.two {
+
+            width: 350px;
+            height: 350px;
+
+            background: #8b5cf6;
+
+            bottom: -150px;
+            right: -100px;
+
+            animation-delay: 3s;
+        }
+
+
+        .blob.three {
+
+            width: 200px;
+            height: 200px;
+
+            background: #06b6d4;
+
+            top: 40%;
+            left: 45%;
+
+            animation-delay: 6s;
+        }
+
+
+        @keyframes floatBlob {
+
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px, -30px) scale(1.1);
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+        }
+
+
+        /* =========================================
+           APP
+        ========================================= */
+
+        .app {
+
+            display: flex;
+
+            width: 100%;
+
+            min-height: 100vh;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+
+            width: 260px;
+
+            min-height: 100vh;
+
+            padding: 25px 18px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    160deg,
+                    #0f172a,
+                    #172554,
+                    #111827
+                );
+
+            box-shadow:
+                10px 0 40px
+                rgba(15, 23, 42, 0.15);
+
+            position: sticky;
+
+            top: 0;
+
+            align-self: flex-start;
+
+            overflow: hidden;
+
+            animation:
+                slideSidebar 0.7s ease;
+        }
+
+
+        @keyframes slideSidebar {
+
+            from {
+
+                transform: translateX(-100%);
+
+                opacity: 0;
+            }
+
+            to {
+
+                transform: translateX(0);
+
+                opacity: 1;
+            }
+        }
+
+
+        .sidebar::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(59, 130, 246, 0.15);
+
+            top: -70px;
+
+            right: -70px;
+        }
+
+
+        /* =========================================
+           LOGO
+        ========================================= */
+
+        .logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .logo-icon {
+
+            width: 38px;
+            height: 38px;
+
+            border-radius: 11px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #3b82f6,
+                    #8b5cf6
+                );
+
+            font-size: 20px;
+
+            animation:
+                logoPulse 3s ease-in-out infinite;
+        }
+
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+
+        .sidebar h2 {
+
+            font-size: 20px;
+        }
+
+
+        .subtitle {
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+            margin-left: 48px;
+
+            margin-bottom: 28px;
+        }
+
+
+        /* =========================================
+           EMPLOYEE CARD
+        ========================================= */
+
+        .employee-card {
+
+            padding: 15px;
+
+            border-radius: 15px;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.08);
+
+            backdrop-filter:
+                blur(10px);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 30px;
+
+            transition:
+                transform 0.3s ease,
+                background 0.3s ease;
+        }
+
+
+        .employee-card:hover {
+
+            transform:
+                translateY(-3px);
+
+            background:
+                rgba(255, 255, 255, 0.12);
+        }
+
+
+        .avatar {
+
+            width: 45px;
+            height: 45px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #3b82f6,
+                    #8b5cf6
+                );
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-weight: bold;
+
+            box-shadow:
+                0 5px 20px
+                rgba(59, 130, 246, 0.35);
+        }
+
+
+        .employee-card strong {
+
+            font-size: 14px;
+        }
+
+
+        .employee-card p {
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+
+        /* =========================================
+           MENU
+        ========================================= */
+
+        .menu button {
+
+            width: 100%;
+
+            border: none;
+
+            background: transparent;
+
+            color: #cbd5e1;
+
+            padding: 13px;
+
+            margin-bottom: 8px;
+
+            border-radius: 10px;
+
+            text-align: left;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition:
+                all 0.3s ease;
+        }
+
+
+        .menu button:hover {
+
+            background:
+                rgba(255, 255, 255, 0.09);
+
+            color: white;
+
+            transform:
+                translateX(5px);
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+            min-width: 0;
+
+            min-height: 100vh;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .header {
+
+            min-height: 78px;
+
+            background:
+                rgba(255, 255, 255, 0.72);
+
+            backdrop-filter:
+                blur(20px);
+
+            border-bottom:
+                1px solid
+                rgba(148, 163, 184, 0.2);
+
+            padding:
+                15px 30px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            animation:
+                fadeDown 0.7s ease;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 10;
+        }
+
+
+        @keyframes fadeDown {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(-15px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        .header h1 {
+
+            color: #0f172a;
+
+            font-size: 22px;
+        }
+
+
+        .header p {
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            margin-top: 4px;
+        }
+
+
+        /* =========================================
+           ONLINE STATUS
+        ========================================= */
+
+        .status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-top: 6px;
+
+            color: #16a34a;
+
+            font-size: 12px;
+        }
+
+
+        .status-dot {
+
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            animation:
+                onlinePulse 2s infinite;
+        }
+
+
+        @keyframes onlinePulse {
+
+            0% {
+
+                box-shadow:
+                    0 0 0 0
+                    rgba(34, 197, 94, 0.5);
+            }
+
+            70% {
+
+                box-shadow:
+                    0 0 0 8px
+                    rgba(34, 197, 94, 0);
+            }
+
+            100% {
+
+                box-shadow:
+                    0 0 0 0
+                    rgba(34, 197, 94, 0);
+            }
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        .logout-btn {
+
+            border: none;
+
+            padding:
+                10px 17px;
+
+            border-radius: 9px;
+
+            background: white;
+
+            color: #475569;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 3px 15px
+                rgba(15, 23, 42, 0.06);
+
+            transition:
+                all 0.3s ease;
+        }
+
+
+        .logout-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 7px 20px
+                rgba(15, 23, 42, 0.12);
+        }
+
+
+        /* =========================================
+           CHAT CONTAINER
+        ========================================= */
+
+        .chat-container {
+
+            display: flex;
+
+            flex-direction: column;
+
+            max-width: 1000px;
+
+            width: 100%;
+
+            margin: auto;
+
+            padding:
+                25px 30px;
+
+            min-height:
+                calc(100vh - 78px);
+        }
+
+
+        /* =========================================
+           CHAT BOX
+        ========================================= */
+
+        .chat-box {
+
+            flex: 1;
+
+            min-height: 400px;
+
+            max-height:
+                calc(100vh - 250px);
+
+            overflow-y: auto;
+
+            padding:
+                10px 8px 20px;
+
+            scroll-behavior: smooth;
+        }
+
+
+        .chat-box::-webkit-scrollbar {
+
+            width: 6px;
+        }
+
+
+        .chat-box::-webkit-scrollbar-thumb {
+
+            background: #cbd5e1;
+
+            border-radius: 10px;
+        }
+
+
+        /* =========================================
+           MESSAGE
+        ========================================= */
+
+        .message {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 10px;
+
+            margin-bottom: 22px;
+
+            animation:
+                messageIn 0.45s ease;
+        }
+
+
+        @keyframes messageIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(12px)
+                    scale(0.98);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+        }
+
+
+        .message-avatar {
+
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+
+        .ai-avatar {
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            box-shadow:
+                0 5px 18px
+                rgba(37, 99, 235, 0.25);
+
+            animation:
+                aiFloat 3s ease-in-out infinite;
+        }
+
+
+        @keyframes aiFloat {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0);
+            }
+
+            50% {
+                transform:
+                    translateY(-3px);
+            }
+        }
+
+
+        .user-avatar {
+
+            background: #e2e8f0;
+
+            color: #475569;
+        }
+
+
+        .message-content {
+
+            max-width: 75%;
+        }
+
+
+        .message-content strong {
+
+            font-size: 12px;
+
+            color: #475569;
+        }
+
+
+        .message-content p {
+
+            margin-top: 5px;
+
+            padding:
+                12px 15px;
+
+            background:
+                rgba(255, 255, 255, 0.85);
+
+            border:
+                1px solid
+                rgba(226, 232, 240, 0.8);
+
+            border-radius:
+                5px 15px 15px 15px;
+
+            color: #334155;
+
+            line-height: 1.55;
+
+            box-shadow:
+                0 5px 20px
+                rgba(15, 23, 42, 0.04);
+
+            word-wrap: break-word;
+        }
+
+
+        /* =========================================
+           USER MESSAGE
+        ========================================= */
+
+        .user-message {
+
+            justify-content: flex-end;
+        }
+
+
+        .user-message .message-content {
+
+            order: 1;
+        }
+
+
+        .user-message .message-avatar {
+
+            order: 2;
+        }
+
+
+        .user-message .message-content p {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #4f46e5
+                );
+
+            color: white;
+
+            border-radius:
+                15px 5px 15px 15px;
+
+            box-shadow:
+                0 7px 20px
+                rgba(37, 99, 235, 0.18);
+        }
+
+
+        .user-message .message-content strong {
+
+            display: block;
+
+            text-align: right;
+        }
+
+
+        /* =========================================
+           TYPING
+        ========================================= */
+
+        .typing {
+
+            display: flex;
+
+            gap: 5px;
+
+            padding:
+                13px 15px;
+
+            background: white;
+
+            border-radius:
+                5px 15px 15px 15px;
+
+            width: fit-content;
+
+            box-shadow:
+                0 5px 20px
+                rgba(15, 23, 42, 0.05);
+        }
+
+
+        .typing span {
+
+            width: 7px;
+            height: 7px;
+
+            background: #94a3b8;
+
+            border-radius: 50%;
+
+            animation:
+                typingAnimation 1.2s infinite;
+        }
+
+
+        .typing span:nth-child(2) {
+
+            animation-delay:
+                0.2s;
+        }
+
+
+        .typing span:nth-child(3) {
+
+            animation-delay:
+                0.4s;
+        }
+
+
+        @keyframes typingAnimation {
+
+            0%,
+            60%,
+            100% {
+
+                transform:
+                    translateY(0);
+
+                opacity: 0.5;
+            }
+
+            30% {
+
+                transform:
+                    translateY(-5px);
+
+                opacity: 1;
+            }
+        }
+
+
+        /* =========================================
+           QUICK QUESTIONS
+        ========================================= */
+
+        .quick-questions {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 10px;
+
+            margin-top: 8px;
+        }
+
+
+        .quick-questions button {
+
+            border:
+                1px solid
+                rgba(203, 213, 225, 0.8);
+
+            background:
+                rgba(255, 255, 255, 0.75);
+
+            backdrop-filter:
+                blur(10px);
+
+            padding:
+                12px 10px;
+
+            border-radius: 12px;
+
+            color: #475569;
+
+            cursor: pointer;
+
+            transition:
+                all 0.3s ease;
+        }
+
+
+        .quick-questions button:hover {
+
+            transform:
+                translateY(-4px);
+
+            border-color:
+                #93c5fd;
+
+            background: white;
+
+            box-shadow:
+                0 10px 25px
+                rgba(37, 99, 235, 0.1);
+
+            color: #2563eb;
+        }
+
+
+        /* =========================================
+           INPUT
+        ========================================= */
+
+        .input-area {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 12px;
+
+            padding: 6px;
+
+            background:
+                rgba(255, 255, 255, 0.85);
+
+            border:
+                1px solid
+                rgba(203, 213, 225, 0.8);
+
+            border-radius: 14px;
+
+            backdrop-filter:
+                blur(15px);
+
+            box-shadow:
+                0 10px 35px
+                rgba(15, 23, 42, 0.06);
+
+            position: sticky;
+
+            bottom: 10px;
+
+            z-index: 5;
+        }
+
+
+        .input-area input {
+
+            flex: 1;
+
+            min-width: 0;
+
+            border: none;
+
+            outline: none;
+
+            background: transparent;
+
+            padding:
+                12px 14px;
+
+            font-size: 14px;
+
+            color: #334155;
+        }
+
+
+        .input-area input::placeholder {
+
+            color: #94a3b8;
+        }
+
+
+        .send-btn {
+
+            border: none;
+
+            padding:
+                0 22px;
+
+            min-height: 45px;
+
+            border-radius: 10px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition:
+                all 0.3s ease;
+        }
+
+
+        .send-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 8px 25px
+                rgba(37, 99, 235, 0.3);
+        }
+
+
+        .send-btn:active {
+
+            transform:
+                scale(0.96);
+        }
+
+
+        /* =========================================
+           TABLET
+        ========================================= */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+
+                width: 220px;
+            }
+
+
+            .quick-questions {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                overflow-x: hidden;
+
+                overflow-y: auto;
+            }
+
+
+            .app {
+
+                display: block;
+
+                min-height: 100vh;
+            }
+
+
+            .sidebar {
+
+                display: none;
+            }
+
+
+            .main {
+
+                min-height: 100vh;
+            }
+
+
+            .header {
+
+                padding:
+                    15px;
+
+                min-height: 78px;
+
+                position: sticky;
+
+                top: 0;
+            }
+
+
+            .header h1 {
+
+                font-size: 18px;
+            }
+
+
+            .header p {
+
+                font-size: 11px;
+            }
+
+
+            .logout-btn {
+
+                padding:
+                    8px 12px;
+
+                font-size: 12px;
+            }
+
+
+            .chat-container {
+
+                padding:
+                    15px;
+
+                min-height:
+                    calc(100vh - 78px);
+            }
+
+
+            .chat-box {
+
+                min-height: 450px;
+
+                max-height: none;
+
+                overflow-y: visible;
+
+                flex: none;
+            }
+
+
+            .quick-questions {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .quick-questions button {
+
+                font-size: 12px;
+
+                padding: 10px 5px;
+            }
+
+
+            .message-content {
+
+                max-width: 85%;
+            }
+
+
+            .input-area {
+
+                position: sticky;
+
+                bottom: 10px;
+            }
+
+
+            .send-btn {
+
+                padding:
+                    0 15px;
+            }
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     ANIMATED BACKGROUND
+========================================= -->
+
+<div class="background-animation">
+
+    <div class="blob one"></div>
+
+    <div class="blob two"></div>
+
+    <div class="blob three"></div>
+
+</div>
+
+
+
+<!-- =========================================
+     APP
+========================================= -->
+
+<div class="app">
+
+
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🤖
+            </div>
+
+            <h2>
+                HR Assistant
+            </h2>
+
+        </div>
+
+
+        <p class="subtitle">
+            AI Employee Support
+        </p>
+
+
+        <!-- Employee -->
+
+        <div class="employee-card">
+
+            <div class="avatar">
+                MN
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Mohammed
+                </strong>
+
+                <p>
+                    AI/ML Developer
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Menu -->
+
+        <div class="menu">
+
+            <button
+                onclick="showMessage('Home')"
+            >
+                🏠 &nbsp; Home
+            </button>
+
+
+            <button
+                onclick="showMessage('Leave')"
+            >
+                📅 &nbsp; Leave
+            </button>
+
+
+            <button
+                onclick="showMessage('Attendance')"
+            >
+                ⏰ &nbsp; Attendance
+            </button>
+
+
+            <button
+                onclick="showMessage('Payroll')"
+            >
+                💰 &nbsp; Payroll
+            </button>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================
+         MAIN
+    ====================================== -->
+
+    <main class="main">
+
+
+        <!-- Header -->
+
+        <header class="header">
+
+
+            <div>
+
+                <h1>
+                    AI HR Assistant
+                </h1>
+
+
+                <p>
+                    Your intelligent employee support assistant
+                </p>
+
+
+                <div class="status">
+
+                    <span class="status-dot"></span>
+
+                    AI Assistant Online
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+
+        </header>
+
+
+
+        <!-- =================================
+             CHAT
+        ================================== -->
+
+        <section class="chat-container">
+
+
+            <div
+                id="chatBox"
+                class="chat-box"
+            >
+
+
+                <!-- Welcome -->
+
+                <div class="message">
+
+
+                    <div
+                        class="message-avatar ai-avatar"
+                    >
+                        AI
+                    </div>
+
+
+                    <div class="message-content">
+
+                        <strong>
+                            HR Assistant
+                        </strong>
+
+
+                        <p>
+
+                            Hello Mohammed 👋
+
+                            <br><br>
+
+                            I'm your AI HR Assistant.
+
+                            <br>
+
+                            You can ask me about
+                            leave, attendance,
+                            HR policies,
+                            employee details
+                            and more.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Quick Questions -->
+
+            <div class="quick-questions">
+
+
+                <button
+                    onclick="sendQuickMessage(
+                        'How many leave days do I have?'
+                    )"
+                >
+                    📅 Leave Balance
+                </button>
+
+
+                <button
+                    onclick="sendQuickMessage(
+                        'What is the annual leave policy?'
+                    )"
+                >
+                    📖 Leave Policy
+                </button>
+
+
+                <button
+                    onclick="sendQuickMessage(
+                        'What is my attendance?'
+                    )"
+                >
+                    ⏰ Attendance
+                </button>
+
+
+                <button
+                    onclick="sendQuickMessage(
+                        'Show my profile'
+                    )"
+                >
+                    👤 My Profile
+                </button>
+
+
+            </div>
+
+
+
+            <!-- Input -->
+
+            <div class="input-area">
+
+
+                <input
+
+                    type="text"
+
+                    id="userInput"
+
+                    placeholder="Ask your HR question..."
+
+                    onkeydown="handleEnter(event)"
+
+                >
+
+
+                <button
+                    class="send-btn"
+                    onclick="sendMessage()"
+                >
+                    Send ➤
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================
+   SEND MESSAGE
+========================================= */
+
+async function sendMessage() {
+
+
+    const input =
+        document.getElementById(
+            "userInput"
+        );
+
+
+    const message =
+        input.value.trim();
+
+
+    if (message === "") {
+
+        return;
+
+    }
+
+
+    const chatBox =
+        document.getElementById(
+            "chatBox"
+        );
+
+
+    /* =====================================
+       USER MESSAGE
+    ===================================== */
+
+    chatBox.innerHTML += `
+
+        <div class="message user-message">
+
+            <div class="message-content">
+
+                <strong>
+                    You
+                </strong>
+
+
+                <p>
+                    ${escapeHTML(message)}
+                </p>
+
+            </div>
+
+
+            <div
+                class="message-avatar user-avatar"
+            >
+                You
+            </div>
+
+        </div>
+
+    `;
+
+
+    input.value = "";
+
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+
+
+
+    /* =====================================
+       TYPING ANIMATION
+    ===================================== */
+
+    const typingId =
+        "typing-" + Date.now();
+
+
+    chatBox.innerHTML += `
+
+        <div
+            class="message"
+            id="${typingId}"
+        >
+
+            <div
+                class="message-avatar ai-avatar"
+            >
+                AI
+            </div>
+
+
+            <div class="message-content">
+
+                <strong>
+                    HR Assistant
+                </strong>
+
+
+                <div class="typing">
+
+                    <span></span>
+
+                    <span></span>
+
+                    <span></span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+
+
+
+    try {
+
+
+        /* =================================
+           SEND TO FASTAPI
+        ================================= */
+
+        const response =
+            await fetch(
+
+                "http://127.0.0.1:8000/chat",
+
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+
+                    body:
+                        JSON.stringify({
+
+                            employee_id:
+                                "1001",
+
+                            message:
+                                message
+
+                        })
+
+                }
+
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Server error"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+
+        /* =================================
+           REMOVE TYPING
+        ================================= */
+
+        const typingElement =
+            document.getElementById(
+                typingId
+            );
+
+
+        if (typingElement) {
+
+            typingElement.remove();
+
+        }
+
+
+
+        /* =================================
+           AI RESPONSE
+        ================================= */
+
+        chatBox.innerHTML += `
+
+            <div class="message">
+
+                <div
+                    class="message-avatar ai-avatar"
+                >
+                    AI
+                </div>
+
+
+                <div class="message-content">
+
+                    <strong>
+                        HR Assistant
+                    </strong>
+
+
+                    <p>
+                        ${formatResponse(
+                            data.response
+                        )}
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        chatBox.scrollTop =
+            chatBox.scrollHeight;
+
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(error);
+
+
+        const typingElement =
+            document.getElementById(
+                typingId
+            );
+
+
+        if (typingElement) {
+
+            typingElement.remove();
+
+        }
+
+
+        chatBox.innerHTML += `
+
+            <div class="message">
+
+                <div
+                    class="message-avatar ai-avatar"
+                >
+                    AI
+                </div>
+
+
+                <div class="message-content">
+
+                    <strong>
+                        HR Assistant
+                    </strong>
+
+
+                    <p>
+
+                        ❌ Unable to connect
+                        to the HR server.
+
+                        <br><br>
+
+                        Please make sure
+                        FastAPI is running.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        chatBox.scrollTop =
+            chatBox.scrollHeight;
+
+    }
+
+}
+
+
+
+/* =========================================
+   QUICK QUESTION
+========================================= */
+
+function sendQuickMessage(message) {
+
+
+    const input =
+        document.getElementById(
+            "userInput"
+        );
+
+
+    input.value = message;
+
+
+    sendMessage();
+
+}
+
+
+
+/* =========================================
+   ENTER KEY
+========================================= */
+
+function handleEnter(event) {
+
+
+    if (event.key === "Enter") {
+
+        sendMessage();
+
+    }
+
+}
+
+
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+function showMessage(section) {
+
+
+    const chatBox =
+        document.getElementById(
+            "chatBox"
+        );
+
+
+    chatBox.innerHTML += `
+
+        <div class="message">
+
+
+            <div
+                class="message-avatar ai-avatar"
+            >
+                AI
+            </div>
+
+
+            <div class="message-content">
+
+                <strong>
+                    HR Assistant
+                </strong>
+
+
+                <p>
+
+                    You selected
+                    <strong>${escapeHTML(section)}</strong>.
+
+                    <br><br>
+
+                    Ask me a question
+                    about ${escapeHTML(section)}.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+
+}
+
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+function logout() {
+
+    alert(
+        "Logout functionality will be added later."
+    );
+
+}
+
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(text) {
+
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent = text;
+
+
+    return div.innerHTML;
+
+}
+
+
+
+/* =========================================
+   FORMAT AI RESPONSE
+========================================= */
+
+function formatResponse(text) {
+
+
+    return escapeHTML(text)
+
+        .replace(
+            /\n/g,
+            "<br>"
+        )
+
+        .replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
